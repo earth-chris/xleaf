@@ -43,14 +43,14 @@ jobs:
       run: |
         make create
       if: |
-        steps.cache.outputs.cache-hit != 'true' ||
+        steps.cache.outputs.cache-hit == 'true' &&
         matrix.os == 'ubuntu-latest'
 
     - name: Create MacOS environment and build package
       run: |
         zsh brew install gmake gcc
         zsh gmake create
-      #if: steps.cache.outputs.cache-hit != 'true'
+      #if: steps.cache.outputs.cache-hit == 'true'
       if: matrix.os == 'macos-latest'
     
     - name: Run pytest
