@@ -30,8 +30,8 @@ init:
 
 create:
 	conda create -n ${ENV} --file ${CONDA_LOCK}
-	pip install -e .
-	pre-commit install
+	${ENV_CONDA} pip install -e .
+	${ENV_CONDA} pre-commit install
 
 test:
 	${ENV_CONDA} pytest -n auto
