@@ -14,6 +14,22 @@
 
 🌿 It includes sensible defaults that make it easy to get up and running quickly, and clear code documentation in the form of docstrings and type hints.
 
+📚 All credit for the fundamental modeling code and for the underlying science belongs to the original researchers. Please see their most recent research:
+
+```
+@article{feret2017prospect,
+  title={PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle},
+  author={Feret, J-B and Gitelson, AA and Noble, SD and Jacquemoud, S},
+  journal={Remote Sensing of Environment},
+  volume={193},
+  pages={204--215},
+  year={2017},
+  publisher={Elsevier}
+}
+```
+
+🧙 Shout out to JB.
+
 ---
 
 ## Usage
@@ -59,7 +75,7 @@ The definition and expected range of values for each parameter is described in t
 pip install xleaf
 ```
 
-This may require a FORTRAN compiler. So on ubuntu could `sudo apt install gcc` and on macos you'd run `brew install gcc`.
+This may require a FORTRAN compiler. So on ubuntu you could run `sudo apt install gcc` and on macos you'd run `brew install gcc`.
 
 ---
 
