@@ -38,7 +38,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
 
     - name: Create MacOS environment and build package
-      shell: zsh
+      shell: /bin/zsh {0}
       run: |
         brew install gmake gcc
         gmake create
