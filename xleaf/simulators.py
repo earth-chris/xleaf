@@ -93,7 +93,7 @@ def simulate_canopy(
         https://www.mdpi.com/2072-4292/5/7/3280
 
     See also: Asner, Martin, Knapp, Tupayachi, Anderson, Carranza, Martinez,
-        Houcheime, Sinca, Weiss (2011)
+        Houcheime, Sinca & Weiss (2011)
         http://dx.doi.org/10.1016/j.rse.2011.08.020
 
     Args:
@@ -120,8 +120,10 @@ def simulate_canopy(
             you can find some examples like `xleaf.parameters.LeafUniform`.
         soil_dryness: fraction of dry/wet soil. 1 indicates dry, 0 indicates wet.
         solar_zenith: solar zenith angle (degrees).
+            range is a fairly uniform distribution from ~ 10 - 70.
         solar_azimuth: solar azimuth angle (degrees).
         view_zenith: sensor zenith angle (degrees).
+            should be 0 for nadir-viewing instruments.
         view_azimuth: sensor azimuth angle (degrees).
         hot_spot: hot spot parameter (unitless).
 
