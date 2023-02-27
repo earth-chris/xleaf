@@ -14,6 +14,5 @@ dependencies:
   - ipython
   - matplotlib
 platforms:
-  - osx-64
-  - osx-arm64
   - linux-64
+  - osx-arm64
