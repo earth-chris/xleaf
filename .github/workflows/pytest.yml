@@ -33,6 +33,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     
     - name: Cache environment
+      uses: actions/cache@v2
       with:
         path: /usr/share/miniconda/envs/xleaf
         key: env-${{ hashFiles('conda-linux-64.lock', 'conda-osx-arm64.lock') }}-${{ env.CACHE_NUMBER }}
