@@ -5,9 +5,6 @@ on:
   push:
     branches: [ main ]
 
-env:
-  CACHE_NUMBER: 0
-
 jobs:
   build:
     strategy:
@@ -39,6 +36,8 @@ jobs:
 
     - name: Create MacOS environment and build package
       shell: /bin/zsh {0}
+      env:
+        SHELL: /bin/zsh
       run: |
         brew install make gcc
         gmake create
