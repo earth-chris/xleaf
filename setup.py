@@ -7,7 +7,17 @@ version = open(osp.join(this_dir, "xleaf", "__version__.py")).read().strip('"\n'
 long_description = open(osp.join(this_dir, "README.md"), "r", encoding="utf-8").read()
 requirements = open(osp.join(this_dir, "requirements.txt"), "r", encoding="utf-8").read().strip().split()
 
-fortran_files = ["MODULE_PRO4SAIL.f90", "dataSpec_PDB.f90", "main_PROSAIL.f90", "LIDF.f90", "dladgen.f", "PRO4SAIL.f90", "prospect_DB.f90", "tav_abs.f90", "volscatt.f90"]
+fortran_files = [
+    "MODULE_PRO4SAIL.f90",
+    "dataSpec_PDB.f90",
+    "main_PROSAIL.f90",
+    "LIDF.f90",
+    "dladgen.f",
+    "PRO4SAIL.f90",
+    "prospect_DB.f90",
+    "tav_abs.f90",
+    "volscatt.f90",
+]
 
 setup_args = {
     "name": "xleaf",
@@ -25,6 +35,7 @@ setup_args = {
         "prosail",
         "radiative transfer modeling",
         "simulation modeling",
+        "remote sensing",
         "python",
     ],
     "packages": ["xleaf"],
