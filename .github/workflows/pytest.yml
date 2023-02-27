@@ -41,7 +41,7 @@ jobs:
     - name: Create MacOS environment and build package
       shell: /bin/zsh {0}
       run: |
-        conda create -n ${{ env.PACKAGE }} --file environment.yaml
+        conda create --file environment.yaml
         conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
       if: matrix.os == 'macos-latest'
     
