@@ -33,6 +33,10 @@ create:
 	${ENV_CONDA} pip install -e .
 	${ENV_CONDA} pre-commit install
 
+update:
+	conda-lock --mamba -f environment.yaml -k explicit
+	${ENV_CONDA} conda update --file ${CONDA_LOCK}
+
 test:
 	${ENV_CONDA} pytest -n auto
 

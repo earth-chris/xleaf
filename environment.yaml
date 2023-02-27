@@ -12,6 +12,7 @@ dependencies:
   - pytest-xdist
   - wheel
   - ipython
+  - matplotlib
 platforms:
   - linux-64
   - osx-arm64
