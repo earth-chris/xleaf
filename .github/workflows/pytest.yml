@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  PACKAGE: xleaf
+
 jobs:
   build:
     strategy:
@@ -31,18 +34,17 @@ jobs:
     
     - name: Create Linux environment and build package
       run: |
-        make create
+        conda create -n ${{ env.PACKAGE }} --file conda-linux-64.lock
+        conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
       if: matrix.os == 'ubuntu-latest'
 
     - name: Create MacOS environment and build package
       shell: /bin/zsh {0}
-      env:
-        SHELL: /bin/zsh
       run: |
-        brew install make gcc
-        gmake create
+        conda create -n ${{ env.PACKAGE }} --file conda-osx-arm64.lock
+        conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
       if: matrix.os == 'macos-latest'
     
     - name: Run pytest
       run: |
-        make test
+        conda run -n ${{ env.PACKAGE }} --no-capture-output pytest -n auto
