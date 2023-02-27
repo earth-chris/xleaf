@@ -89,7 +89,7 @@ def simulate_canopy(
         leaf optical properties through a complete lifecycle, RSE
         http://doi.org/10.1016/j.rse.2017.03.004
 
-    See also: Rivera, Verrels, Leonenko & Moreno (2017)
+    See also: Rivera, Verrelst, Leonenko & Moreno (2017)
         https://www.mdpi.com/2072-4292/5/7/3280
 
     See also: Asner, Martin, Knapp, Tupayachi, Anderson, Carranza, Martinez,
@@ -142,9 +142,9 @@ def simulate_canopy(
     N = float(N)
     lai = float(lai)
     soil_dryness = float(soil_dryness)
-    solar_zenith = float(solar_zenith)
+    solar_zenith = np.abs(float(solar_zenith))
     solar_azimuth = float(solar_azimuth)
-    view_zenith = float(view_zenith)
+    view_zenith = np.abs(float(view_zenith))
     view_azimuth = float(view_azimuth)
     hot_spot = float(hot_spot)
 
