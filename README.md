@@ -1,6 +1,6 @@
 # xleaf
 
-![docs/spectra.png](Canopy reflectance simulated in rainbows.)
+![Canopy reflectance simulated in rainbows.](docs/spectra.png)
 
 <p align="center">
     <em>Leaf and canopy radiative transfer modeling tools built on PROSPECT-D and SAIL.</em>
@@ -28,7 +28,7 @@
 }
 ```
 
-🧙 Shout out to JB.
+🧙 Shout out to my man JB.
 
 ---
 
@@ -86,5 +86,5 @@ This may require a FORTRAN compiler. So on ubuntu you could run `sudo apt instal
 <a href="https://twitter.com/earth_chris">![Twitter Follow](https://img.shields.io/twitter/follow/earth_chris)</a>
 <a href="https://github.com/earth-chris">![GitHub Stars](https://img.shields.io/github/stars/earth-chris?affiliations=OWNER%2CCOLLABORATOR&style=social)</a>
 
-[^1]: [Planet Labs PBC, San Francisco](https://planet.com)
+[^1]: [Planet Labs PBC, San Francisco](https://www.planet.com)
 [^2]: [Center for Conservation Biology, Stanford University](https://ccb.stanford.edu)
