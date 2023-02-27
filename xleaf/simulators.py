@@ -4,8 +4,8 @@ from typing import Tuple, Union
 
 import numpy as np
 
-from xleaf import prosail
-from xleaf.parameters import LeafSpherical
+from . import prosail
+from .parameters import LeafSpherical
 
 
 def simulate_leaf(
