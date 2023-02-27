@@ -34,8 +34,7 @@ jobs:
     
     - name: Create Linux environment and build package
       run: |
-        conda create -n ${{ env.PACKAGE }} --file conda-linux-64.lock
-        conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
+        make create
       if: matrix.os == 'ubuntu-latest'
 
     - name: Create MacOS environment and build package
@@ -47,4 +46,4 @@ jobs:
     
     - name: Run pytest
       run: |
-        conda run -n ${{ env.PACKAGE }} --no-capture-output pytest -n auto
+        make test
