@@ -14,7 +14,7 @@
 
 🌿 It includes sensible defaults that make it easy to get up and running quickly, and clear code documentation in the form of docstrings and type hints.
 
-📚 All credit for the fundamental modeling code and for the underlying science belongs to the original researchers. Please see their most recent research:
+📚 All credit for the fundamental modeling code and for the underlying science belongs to the original researchers. `xleaf` is mostly a wrapper. Please see their most recent research:
 
 ```
 @article{feret2017prospect,
@@ -32,7 +32,17 @@
 
 ---
 
-## Usage
+## Install
+
+```
+pip install xleaf
+```
+
+🖥️ Depending on your OS, you may need a FORTRAN compiler. So on ubuntu you could run `sudo apt install gcc`. On macos you'd run `brew install gcc`.
+
+---
+
+## Leaf and canopy simulations
 
 ```python
 import xleaf
@@ -60,22 +70,57 @@ canopy = xleaf.simulate_canopy(
 )
 
 # and plot them together
-plt.plot(xleaf.parameters.wavelengths, leaf, label='leaf')
-plt.plot(xleaf.parameters.wavelengths, canopy, label='canopy')
+plt.plot(xleaf.wavelengths, leaf, label='leaf')
+plt.plot(xleaf.wavelengths, canopy, label='canopy')
 plt.legend()
 ```
 
-The definition and expected range of values for each parameter is described in the `xleaf` docstrings.
+📄 The definitions and expected range of values for each parameter are described in the `xleaf` docstrings.
 
 ---
 
-## Install
+## Random forests
 
-```
-pip install xleaf
+📊 `xleaf` provides classes for generating random parameter values within the global range of expected values. These classes have a `.sample()` method for generating an appropriate random value for each parameter based on a literature review.
+
+```python
+import xleaf
+import matplotlib.pyplot as plt
+
+# generate 5 random leaf spectra from global defaults
+for idx in range(5):
+    chl = xleaf.ChlorophyllSampler.sample()
+    car = xleaf.CarotenoidSampler.sample()
+    antho = xleaf.AnthocyaninSampler.sample()
+    ewt = xleaf.EWTSampler.sample()
+    lma = xleaf.LMASampler.sample()
+    N = xleaf.NSampler.sample()
+    leaf = xleaf.simulate_leaf(chl, car, antho, ewt, lma, N)
+    plt.plot(xleaf.wavelengths, leaf, label=f"leaf {idx+1}")
+
+plt.legend()
 ```
 
-This may require a FORTRAN compiler. So on ubuntu you could run `sudo apt install gcc` and on macos you'd run `brew install gcc`.
+🧪 Or experiment by setting the range of values yourself:
+
+```python
+import xleaf
+import matplotlib.pyplot as plt
+
+MyLAISampler = xleaf.UniformSampler(min=2, max=6)
+MyVZASampler = xleaf.NormalSampler(mean=0, stdv=3, min=-10, max=10)
+
+# generate 5 random canopy spectra just varying LAI/VZA
+for idx in range(5):
+    lai = MyLAISampler.sample()
+    vza = MyVZASampler.sample()
+    canopy = xleaf.simulate_canopy(lai=lai, view_zenith=vza)
+    plt.plot(xleaf.wavelengths, canopy, label=f"lai: {lai:0.2f}, vza: {vza:0.2f}")
+
+plt.legend()
+```
+
+⚡ These parameters don't always vary independently. Try to exercise caution when constructing parameter estimates to ensure biological realism.
 
 ---
 
