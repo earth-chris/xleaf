@@ -47,7 +47,7 @@ setup_args = {
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    "ext_modules": [Extension(name="xleaf.prosail", sources=[osp.join("src", file) for file in fortran_files])],
+    "ext_modules": [Extension(name="xleaf.prosail", sources=[osp.join("prosail", file) for file in fortran_files])],
 }
 
 setup(**setup_args)
