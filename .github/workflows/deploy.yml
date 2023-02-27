@@ -46,7 +46,7 @@ jobs:
     
     - name: Build package
       run: |
-        python3 setup.py sdist bdist_wheel
+        conda run -n ${{ env.PACKAGE }} --no-capture-output python3 setup.py sdist bdist_wheel
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
