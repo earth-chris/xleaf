@@ -40,7 +40,7 @@ jobs:
     - name: Create MacOS environment and build package
       shell: /bin/zsh {0}
       run: |
-        brew install gmake gcc
+        brew install make gcc
         gmake create
       if: matrix.os == 'macos-latest'
     
