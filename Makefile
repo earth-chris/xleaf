@@ -1,4 +1,4 @@
-.PHONY: init create update test destroy
+.PHONY: init create update test destroy deploy
 
 .DEFAULT: help
 help:
@@ -12,6 +12,8 @@ help:
 	@echo "	run module tests"
 	@echo "make destroy"
 	@echo " delete the current environment to start fresh"
+	@echo "make deploy"
+	@echo " upload package to pypi"
 
 ENV=xleaf
 PYTHON_VERSION=3.9
@@ -42,3 +44,8 @@ test:
 
 destroy:
 	conda env remove -n ${ENV}
+
+deploy:
+	rm -rf dist/
+	python3 setup.py sdist bdist_wheel
+	twine upload dist/*
