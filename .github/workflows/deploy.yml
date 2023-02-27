@@ -1,15 +1,15 @@
-name: pytest
+name: deploy
 
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    tags:
+      - "v*.*.*"
 
 env:
   PACKAGE: xleaf
 
 jobs:
-  build:
+  publish:
     strategy:
       fail-fast: false
       matrix:
@@ -44,6 +44,15 @@ jobs:
         conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
       if: matrix.os == 'macos-latest'
     
-    - name: Run pytest
+    - name: Build package
       run: |
-        make test
+        python3 setup.py sdist bdist_wheel
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+        packages_dir: ./dist
+        verbose: true
+        skip_existing: true
