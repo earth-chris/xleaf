@@ -32,25 +32,16 @@ jobs:
         auto-update-conda: true
         python-version: ${{ matrix.python-version }}
     
-    - name: Cache environment
-      uses: actions/cache@v2
-      with:
-        path: /usr/share/miniconda/envs/xleaf
-        key: env-${{ hashFiles('conda-linux-64.lock', 'conda-osx-arm64.lock') }}-${{ env.CACHE_NUMBER }}
-      id: cache
-    
     - name: Create Linux environment and build package
       run: |
         make create
-      if: |
-        steps.cache.outputs.cache-hit == 'true' &&
-        matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest'
 
     - name: Create MacOS environment and build package
+      shell: zsh
       run: |
-        zsh brew install gmake gcc
-        zsh gmake create
-      #if: steps.cache.outputs.cache-hit == 'true'
+        brew install gmake gcc
+        gmake create
       if: matrix.os == 'macos-latest'
     
     - name: Run pytest
