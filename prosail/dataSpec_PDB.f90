@@ -2234,4 +2234,3 @@ REAL*8 :: Es(nw),Ed(nw),Rsoil1(nw),Rsoil2(nw)
 	4.885E-02/
 
 	END
-
