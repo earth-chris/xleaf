@@ -47,5 +47,5 @@ destroy:
 
 deploy:
 	rm -rf dist/
-	python3 setup.py sdist bdist_wheel
-	twine upload dist/*
+	${ENV_CONDA} python3 setup.py sdist bdist_wheel
+	${ENV_CONDA} twine upload dist/*
