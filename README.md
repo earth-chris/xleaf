@@ -6,6 +6,10 @@
     <em>Leaf and canopy radiative transfer modeling tools built on PROSPECT-D and SAIL.</em>
 </p>
 
+![GitHub](https://img.shields.io/github/license/earth-chris/xleaf)
+![PyPI version](https://img.shields.io/pypi/v/xleaf)
+![GitHub last commit](https://img.shields.io/github/last-commit/earth-chris/xleaf)
+
 ---
 
 ## Introduction
