@@ -14,7 +14,7 @@
 
 🌿 It includes sensible defaults that make it easy to get up and running quickly, and clear code documentation in the form of docstrings and type hints.
 
-📚 All credit for the fundamental modeling code and for the underlying science belongs to the original researchers. `xleaf` is mostly a wrapper. Please see their most recent research:
+📚 All credit for the fundamental modeling code and for the underlying science belongs to the original researchers. `xleaf` is mostly a wrapper. Please cite their most recent research:
 
 ```
 @article{feret2017prospect,
@@ -81,7 +81,7 @@ plt.legend()
 
 ## Random forests
 
-📊 `xleaf` provides classes for generating random parameter values within the global range of expected values. These classes have a `.sample()` method for generating an appropriate random value for each parameter based on a literature review.
+📊 `xleaf` provides classes for generating random parameters within the global range of expected values. These classes have a `.sample()` method for generating an appropriate random value based on a literature review.
 
 ```python
 import xleaf
