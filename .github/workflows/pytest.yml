@@ -40,7 +40,7 @@ jobs:
       shell: /bin/zsh {0}
       run: |
         conda env create --file environment.yaml
-        conda run -n ${{ env.PACKAGE }} --no-capture-output pip install .
+        conda run -n ${{ env.PACKAGE }} --no-capture-output poetry install
       if: matrix.os == 'macos-latest'
     
     - name: Run pytest
