@@ -3,16 +3,10 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - python=3.9.*
+  - python=3.10
   - pip
-  - numpy
+  - poetry
   - gfortran
-  - pre-commit
-  - pytest
-  - pytest-xdist
-  - wheel
-  - ipython
-  - matplotlib
 platforms:
   - linux-64
   - osx-arm64
