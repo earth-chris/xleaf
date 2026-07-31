@@ -22,7 +22,6 @@ jobs:
       - name: Repair wheel (Linux)
         if: runner.os == 'Linux'
         run: |
-          pixi run -e build python -m pip install --upgrade pip auditwheel
           pixi run -e build python -m auditwheel repair dist/*.whl --wheel-dir dist
           find dist -name '*.whl' -not -name '*manylinux*' -delete
 

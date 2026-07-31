@@ -59,6 +59,7 @@ pytest-xdist = "*"
 python-build = "*"
 twine = "*"
 patchelf = ">=0.11.0"
+auditwheel = "*"
 
 [tool.pixi.environments]
 default = { features = ["dev"], solve-group = "default" }
