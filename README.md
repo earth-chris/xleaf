@@ -38,11 +38,25 @@
 
 ## Install
 
+Install from PyPI:
+
 ```
 pip install xleaf
 ```
 
-🖥️ Depending on your OS, you may need a FORTRAN compiler. So on ubuntu you could run `sudo apt install gcc`. On macos you'd run `brew install gcc`.
+### Development
+
+This project uses [pixi](https://pixi.sh) to manage dependencies and builds. To set up a development environment:
+
+```
+pixi install
+```
+
+This installs all dependencies including the Fortran compiler (`gfortran`), `meson`, and `numpy`. To run tests:
+
+```
+pixi run test
+```
 
 ---
 

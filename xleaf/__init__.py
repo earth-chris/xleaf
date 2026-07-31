@@ -1,5 +1,6 @@
+import importlib.metadata
+
 from xleaf import parameters, samplers
-from xleaf.__version__ import __doc__ as __version__
 from xleaf.parameters import (
     AnthocyaninSampler,
     CarotenoidSampler,
@@ -25,3 +26,5 @@ from xleaf.parameters import (
     wavelengths,
 )
 from xleaf.simulators import simulate_canopy, simulate_leaf
+
+__version__ = importlib.metadata.version("xleaf")

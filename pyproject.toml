@@ -1,0 +1,76 @@
+[build-system]
+requires = ["meson-python>=0.15.0", "numpy>=2.0"]
+build-backend = "mesonpy"
+
+[project]
+name = "xleaf"
+version = "1.1.0"
+description = "Leaf and canopy radiative transfer modeling tools built on PROSPECT-D and SAIL"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Christopher Anderson", email = "cbanders@stanford.edu" }]
+keywords = [
+    "prospect",
+    "sail",
+    "prosail",
+    "radiative transfer modeling",
+    "simulation modeling",
+    "remote sensing",
+    "python",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = ["numpy"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = [
+    { platform = "linux-64" },
+    { platform = "osx-arm64", macos = "15.0" },
+]
+
+[tool.pixi.dependencies]
+python = "3.11.*"
+numpy = ">=2.0"
+gfortran = "*"
+meson = "*"
+meson-python = ">=0.15.0"
+ninja = "*"
+pkg-config = "*"
+matplotlib = "*"
+ipython = "*"
+
+[tool.pixi.pypi-options]
+no-build-isolation = ["xleaf"]
+
+[tool.pixi.pypi-dependencies]
+xleaf = { path = ".", editable = true }
+
+[tool.pixi.feature.dev.dependencies]
+pip = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-xdist = "*"
+
+[tool.pixi.feature.build.dependencies]
+python-build = "*"
+twine = "*"
+patchelf = ">=0.11.0"
+
+[tool.pixi.environments]
+default = { features = ["dev"], solve-group = "default" }
+build = { features = ["build"], solve-group = "default" }
+
+##### TASKS #####
+
+[tool.pixi.feature.dev.tasks]
+postinstall = "pip install --no-build-isolation --no-deps -e ."
+test = { cmd = "pytest -n auto", depends-on = ["postinstall"] }
+precommit = "pre-commit install"
+
+[tool.pixi.feature.build.tasks]
+build = "python -m build --no-isolation"
+deploy = { cmd = "twine upload dist/*", depends-on = ["build"] }
