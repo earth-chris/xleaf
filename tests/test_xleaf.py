@@ -151,6 +151,12 @@ class TestUniformSampler:
         b = xleaf.UniformSampler(min=0, max=1, seed=42)
         assert a.sample() == b.sample()
 
+    def test_unset_bounds_raises(self):
+        us = xleaf.UniformSampler(min=0, max=1)
+        us.min = None
+        with pytest.raises(RuntimeError, match="requires min and max"):
+            us.sample()
+
 
 class TestNormalSampler:
     def test_bounds(self):
@@ -163,10 +169,10 @@ class TestNormalSampler:
         b = xleaf.NormalSampler(mean=0, stdv=1, seed=42)
         assert a.sample() == b.sample()
 
-    def test_one_sided_bound_does_not_crash(self):
-        # only min set: the rejection loop must not compare against a None max
-        ns = xleaf.NormalSampler(mean=5, stdv=2, min=0, seed=1)
-        assert isinstance(ns.sample(), float)
+    def test_one_sided_bound_enforced(self):
+        # only min set: samples respect it, no crash comparing against None max
+        ns = xleaf.NormalSampler(mean=5, stdv=2, min=4, seed=1)
+        assert all(ns.sample() >= 4 for _ in range(100))
 
     def test_unbounded_returns_float(self):
         ns = xleaf.NormalSampler(mean=0, stdv=1, seed=1)

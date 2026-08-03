@@ -51,7 +51,8 @@ class UniformSampler(BaseSampler):
 
     def sample(self) -> float:
         """Return a uniform random sample drawn from the min/max range."""
-        assert self.min is not None and self.max is not None
+        if self.min is None or self.max is None:
+            raise RuntimeError("UniformSampler requires min and max to be set")
         return self.generator.uniform(self.min, self.max)
 
 
@@ -71,9 +72,9 @@ class NormalSampler(BaseSampler):
         Args:
             mean: the center of the distribution.
             stdv: the spread of the distribution. must be >= 0.
-            min: the minimum value to include in sampling.
-            max: the maximum value to include in sampling.
-                both min and max must be set if either are set.
+            min: the minimum value to include in sampling. optional.
+            max: the maximum value to include in sampling. optional.
+                min and max may be set independently (one-sided) or together.
             seed: set the seed for consistent random number generation.
 
         Example:
@@ -86,14 +87,13 @@ class NormalSampler(BaseSampler):
     def sample(self) -> float:
         """Return a random sample drawn from a normal distribution.
 
-        If min and max are set, samples outside the range are rejected and
-        redrawn.
+        If min and/or max is set, samples outside the bound(s) are rejected and
+        redrawn. One-sided bounds are supported.
         """
         assert self.mean is not None and self.stdv is not None
         rnd = self.generator.normal(self.mean, self.stdv)
 
-        if self.min is not None and self.max is not None:
-            while rnd < self.min or rnd > self.max:
-                rnd = self.generator.normal(self.mean, self.stdv)
+        while (self.min is not None and rnd < self.min) or (self.max is not None and rnd > self.max):
+            rnd = self.generator.normal(self.mean, self.stdv)
 
         return rnd
