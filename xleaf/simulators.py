@@ -115,8 +115,9 @@ def simulate_canopy(
             crop range is ~ 0.2 - 8.7
         lidf: leaf inclination distribution function.
             can pass a single value for just the average leaf angle (degrees)
-            or a tuple of (average leaf slope, bimodality), which together
-            must sum to 1. a near-sperical orientation would be (-0.35, -0.15).
+            or a tuple of (average leaf slope, bimodality), whose absolute
+            values must sum to no more than 1. a near-spherical orientation
+            would be (-0.35, -0.15).
             you can find some examples like `xleaf.parameters.LeafUniform`.
         soil_dryness: fraction of dry/wet soil. 1 indicates dry, 0 indicates wet.
         solar_zenith: solar zenith angle (degrees).
@@ -148,8 +149,9 @@ def simulate_canopy(
     view_azimuth = float(view_azimuth)
     hot_spot = float(hot_spot)
 
-    # compute relative azmimuth angle
-    psi = np.abs(view_azimuth - solar_azimuth)
+    # compute relative azimuth angle in degrees (0..180) as expected by PROSAIL
+    psi = float(np.abs((view_azimuth - solar_azimuth) % 360.0))
+    psi = 360.0 - psi if psi > 180.0 else psi
 
     # handle multiple leaf type parameters
     try:
@@ -214,8 +216,9 @@ def simulate_sail(
             crop range is ~ 0.2 - 8.7
         lidf: leaf inclination distribution function.
             can pass a single value for just the average leaf angle (degrees)
-            or a tuple of (average leaf slope, bimodality), which together
-            must sum to 1. a near-sperical orientation would be (-0.35, -0.15).
+            or a tuple of (average leaf slope, bimodality), whose absolute
+            values must sum to no more than 1. a near-spherical orientation
+            would be (-0.35, -0.15).
             you can find some examples like `xleaf.parameters.LeafUniform`.
         soil_dryness: fraction of dry/wet soil. 1 indicates dry, 0 indicates wet.
         solar_zenith: solar zenith angle (degrees).
@@ -242,8 +245,9 @@ def simulate_sail(
     view_azimuth = float(view_azimuth)
     hot_spot = float(hot_spot)
 
-    # compute relative azimuth angle
-    psi = np.abs(view_azimuth - solar_azimuth)
+    # compute relative azimuth angle in degrees (0..180) as expected by PROSAIL
+    psi = float(np.abs((view_azimuth - solar_azimuth) % 360.0))
+    psi = 360.0 - psi if psi > 180.0 else psi
 
     # handle multiple leaf type parameters
     try:

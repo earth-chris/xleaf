@@ -55,6 +55,24 @@ def test_simulate_sail_lai_zero():
     np.testing.assert_allclose(from_sail, from_canopy, rtol=1e-10, atol=1e-12)
 
 
+def test_relative_azimuth_normalization():
+    # psi must fold into [0, 180]: wrap-around and sign are symmetric
+    wrapped = xleaf.simulate_canopy(solar_azimuth=350, view_azimuth=10)  # rel 340 -> 20
+    flipped = xleaf.simulate_canopy(solar_azimuth=10, view_azimuth=350)  # rel 340 -> 20
+    direct = xleaf.simulate_canopy(solar_azimuth=0, view_azimuth=20)  # rel 20
+
+    np.testing.assert_allclose(wrapped, flipped, rtol=1e-12, atol=0)
+    np.testing.assert_allclose(wrapped, direct, rtol=1e-12, atol=0)
+
+
+def test_simulate_sail_azimuth_normalization():
+    refl, trans = xleaf.simulate_leaf(transmittence=True)
+    wrapped = xleaf.simulate_sail(refl, trans, solar_azimuth=350, view_azimuth=10)
+    direct = xleaf.simulate_sail(refl, trans, solar_azimuth=0, view_azimuth=20)
+
+    np.testing.assert_allclose(wrapped, direct, rtol=1e-12, atol=0)
+
+
 def test_UniformSampler():
     min = 3
     max = 6
