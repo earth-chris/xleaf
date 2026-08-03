@@ -16,40 +16,36 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install MinGW-w64 UCRT Fortran toolchain (MSYS2)
-        uses: msys2/setup-msys2@v2
-        id: msys2
+      # setup-fortran installs a pinned gcc/gfortran; avoids the rolling MSYS2
+      # toolchain, whose gfortran 16 ICEs compiling the large DATA module
+      # prosail/dataSpec_PDB.f90
+      - name: Install gcc/gfortran toolchain
+        uses: fortran-lang/setup-fortran@v1
+        id: fortran
         with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-gcc-fortran
-
-      - name: Put UCRT64 toolchain on PATH
-        shell: bash
-        run: echo "${{ steps.msys2.outputs.msys2-location }}/ucrt64/bin" >> "$GITHUB_PATH"
+          compiler: gcc
+          version: '13'
 
       - name: Install build tooling
         shell: bash
         run: python -m pip install --upgrade pip "meson-python>=0.15.0" "numpy>=2.0" meson ninja build delvewheel
 
-      # force meson onto the MinGW toolchain, not MSVC, so the C glue and Fortran share an ABI
+      # force meson onto the gcc toolchain, not MSVC, so the C glue and Fortran share an ABI
       - name: Build Windows wheel
         shell: bash
         env:
-          CC: gcc
-          CXX: g++
-          FC: gfortran
+          CC: ${{ steps.fortran.outputs.cc }}
+          FC: ${{ steps.fortran.outputs.fc }}
         run: |
           rm -rf dist
           python -m build --wheel --no-isolation
 
-      - name: Repair wheel (vendor MinGW runtime DLLs)
+      - name: Repair wheel (vendor gfortran runtime DLLs)
         shell: bash
         run: |
+          fc_bin="$(dirname "$(command -v "${{ steps.fortran.outputs.fc }}")")"
           delvewheel show dist/*.whl
-          delvewheel repair dist/*.whl -w wheelhouse --add-path "${{ steps.msys2.outputs.msys2-location }}/ucrt64/bin"
+          delvewheel repair dist/*.whl -w wheelhouse --add-path "$fc_bin"
           rm dist/*.whl
           mv wheelhouse/*.whl dist/
 
