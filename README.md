@@ -99,27 +99,27 @@ plt.legend()
 
 ## Chaining leaf and canopy models
 
-🔗 `simulate_canopy` runs PROSPECT and 4SAIL together. If you'd rather run the canopy model on a leaf spectrum you already have — a measured spectrum, or one from a different leaf model — use `simulate_sail`. It takes leaf reflectance and transmittance directly, so you can pair it with `simulate_leaf(transmittence=True)`:
+🔗 `simulate_canopy` runs PROSPECT and 4SAIL together. If you'd rather run the canopy model on a leaf spectrum you already have — a measured spectrum, or one from a different leaf model — use `simulate_sail`. It takes leaf reflectance and transmittance directly, so you can pair it with `simulate_leaf(transmittance=True)`:
 
 ```python
 import xleaf
 import matplotlib.pyplot as plt
 
 # simulate a leaf, returning both reflectance and transmittance
-reflectance, transmittence = xleaf.simulate_leaf(
+reflectance, transmittance = xleaf.simulate_leaf(
     chl = 40, # ug/cm2
     car = 8, # ug/cm2
     antho = 0.5, # ug/cm2
     ewt = 0.01, # cm
     lma = 0.009, # g/cm2
     N = 1.5, # unitless
-    transmittence = True,
+    transmittance = True,
 )
 
 # then run the canopy model on that leaf spectrum
 canopy = xleaf.simulate_sail(
     reflectance,
-    transmittence,
+    transmittance,
     lai = 3.0, # m2/m2
     lidf = 30, # degrees
     soil_dryness = 0.75, # %

@@ -4,7 +4,7 @@ build-backend = "mesonpy"
 
 [project]
 name = "xleaf"
-version = "1.1.0"
+version = "1.2.0"
 description = "Leaf and canopy radiative transfer modeling tools built on PROSPECT-D and SAIL"
 readme = "README.md"
 license = "MIT"
@@ -55,6 +55,8 @@ pip = "*"
 pre-commit = "*"
 pytest = "*"
 pytest-xdist = "*"
+pytest-cov = "*"
+mypy = "*"
 
 [tool.pixi.feature.build.dependencies]
 python-build = "*"
@@ -70,9 +72,29 @@ build = { features = ["build"], solve-group = "default" }
 
 [tool.pixi.feature.dev.tasks]
 postinstall = "pip install --no-build-isolation --no-deps -e ."
-test = { cmd = "pytest -n auto", depends-on = ["postinstall"] }
+test = { cmd = "pytest -n auto --cov=xleaf --cov-report=term-missing --cov-report=xml", depends-on = ["postinstall"] }
+typecheck = { cmd = "mypy xleaf", depends-on = ["postinstall"] }
 precommit = "pre-commit install"
 
 [tool.pixi.feature.build.tasks]
 build = "python -m build --no-isolation"
 deploy = { cmd = "twine upload dist/*", depends-on = ["build"] }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["xleaf"]
+# the compiled f2py extension is not measurable by coverage.py
+omit = ["*/prosail*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "@abc.abstractmethod"]
+
+[tool.coverage.paths]
+# map the editable-install location back to the source tree
+source = ["xleaf", "**/xleaf"]
+
+[tool.mypy]
+files = ["xleaf"]
+ignore_missing_imports = true

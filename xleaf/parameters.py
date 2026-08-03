@@ -1,20 +1,23 @@
 """Model parameters and methods for generating random parameter samples"""
 
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 
 from xleaf.samplers import NormalSampler, UniformSampler
 
-n_wavelengths = 2101
-wavelengths = (np.arange(n_wavelengths) * 0.001) + 0.4
-fwhms = np.ones(n_wavelengths, dtype=np.float32)
-units = "micrometers"
+n_wavelengths: int = 2101
+wavelengths: npt.NDArray[np.floating] = (np.arange(n_wavelengths) * 0.001) + 0.4
+fwhms: npt.NDArray[np.float32] = np.ones(n_wavelengths, dtype=np.float32)
+units: str = "micrometers"
 
-LeafErectophile = (-1, 0)
-LeafExtremophile = (0, 1)
-LeafPlagiophile = (0, -1)
-LeafPlanophile = (1, 0)
-LeafSpherical = (-0.35, -0.15)
-LeafUniform = (0, 0)
+LeafErectophile: tuple[float, float] = (-1, 0)
+LeafExtremophile: tuple[float, float] = (0, 1)
+LeafPlagiophile: tuple[float, float] = (0, -1)
+LeafPlanophile: tuple[float, float] = (1, 0)
+LeafSpherical: tuple[float, float] = (-0.35, -0.15)
+LeafUniform: tuple[float, float] = (0, 0)
 
 # solar/view azimuth: https://www.usgs.gov/landsat-missions/solar-illumination-and-sensor-viewing-angle-coefficient-files
 # solar zenith: https://gis.stackexchange.com/questions/191692/maximum-solar-zenith-angle-for-landsat-8-images
