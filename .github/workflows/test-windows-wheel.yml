@@ -49,13 +49,16 @@ jobs:
           rm dist/*.whl
           mv wheelhouse/*.whl dist/
 
+      # run the import from outside the repo so the installed wheel is loaded,
+      # not the source xleaf/ dir (which has no compiled prosail.pyd)
       - name: Verify repaired wheel in a clean venv
         shell: bash
         run: |
           python -m venv verify_env
           verify_env/Scripts/python.exe -m pip install --upgrade pip
           verify_env/Scripts/python.exe -m pip install dist/*.whl
-          verify_env/Scripts/python.exe -c "import xleaf; print(xleaf.__version__); print('OK', xleaf.simulate_leaf().shape)"
+          cd "$RUNNER_TEMP"
+          "$GITHUB_WORKSPACE/verify_env/Scripts/python.exe" -c "import xleaf; print(xleaf.__version__); print('OK', xleaf.simulate_leaf().shape)"
 
       - uses: actions/upload-artifact@v4
         with:
