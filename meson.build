@@ -11,7 +11,12 @@ py = import('python').find_installation(pure : false)
 np_dep = dependency('numpy')
 
 incdir_f2py = run_command(py,
-  ['-c', 'import os; import numpy.f2py; print(os.path.relpath(numpy.f2py.get_include()))'],
+  ['-c', '''import os, numpy.f2py
+inc = numpy.f2py.get_include()
+try:
+    print(os.path.relpath(inc))
+except ValueError:
+    print(inc)'''],
   check : true,
 ).stdout().strip()
 
