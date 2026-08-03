@@ -31,8 +31,13 @@ jobs:
           name: dist-${{ matrix.os }}
           path: dist/*
 
+  build-windows:
+    uses: ./.github/workflows/windows-wheel.yml
+    with:
+      artifact-name: dist-windows-latest
+
   publish:
-    needs: build
+    needs: [build, build-windows]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: pypi

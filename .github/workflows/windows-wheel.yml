@@ -1,0 +1,73 @@
+name: windows-wheel
+
+# Windows wheel module: builds + repairs + verifies a self-contained Windows
+# wheel. Runs on its own for PR-time coverage, and is called by publish.yml
+# (workflow_call) at release so the build logic lives in one place.
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: name for the uploaded wheel artifact
+        type: string
+        default: dist-windows
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # setup-fortran installs a pinned gcc/gfortran; avoids the rolling MSYS2
+      # toolchain, whose gfortran 16 ICEs compiling the large DATA module
+      # prosail/dataSpec_PDB.f90
+      - name: Install gcc/gfortran toolchain
+        uses: fortran-lang/setup-fortran@v1
+        id: fortran
+        with:
+          compiler: gcc
+          version: '13'
+
+      - name: Install build tooling
+        shell: bash
+        run: python -m pip install --upgrade pip "meson-python>=0.15.0" "numpy>=2.0" meson ninja build delvewheel
+
+      # force meson onto the gcc toolchain, not MSVC, so the C glue and Fortran share an ABI
+      - name: Build Windows wheel
+        shell: bash
+        env:
+          CC: ${{ steps.fortran.outputs.cc }}
+          FC: ${{ steps.fortran.outputs.fc }}
+        run: |
+          rm -rf dist
+          python -m build --wheel --no-isolation
+
+      - name: Repair wheel (vendor gfortran runtime DLLs)
+        shell: bash
+        run: |
+          fc_bin="$(dirname "$(command -v "${{ steps.fortran.outputs.fc }}")")"
+          delvewheel show dist/*.whl
+          delvewheel repair dist/*.whl -w wheelhouse --add-path "$fc_bin"
+          rm dist/*.whl
+          mv wheelhouse/*.whl dist/
+
+      # run the import from outside the repo so the installed wheel is loaded,
+      # not the source xleaf/ dir (which has no compiled prosail.pyd)
+      - name: Verify repaired wheel in a clean venv
+        shell: bash
+        run: |
+          python -m venv verify_env
+          verify_env/Scripts/python.exe -m pip install --upgrade pip
+          verify_env/Scripts/python.exe -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$GITHUB_WORKSPACE/verify_env/Scripts/python.exe" -c "import xleaf; print(xleaf.__version__); print('OK', xleaf.simulate_leaf().shape)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name || 'dist-windows-test' }}
+          path: dist/*
