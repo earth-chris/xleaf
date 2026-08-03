@@ -24,7 +24,7 @@ jobs:
           update: true
           install: >-
             mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-gfortran
+            mingw-w64-ucrt-x86_64-gcc-fortran
 
       - name: Put UCRT64 toolchain on PATH
         shell: bash
