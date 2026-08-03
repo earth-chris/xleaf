@@ -1,40 +1,40 @@
 """Methods for generating random parameter samples"""
 
-from typing import Callable
+from __future__ import annotations
+
+import abc
 
 import numpy as np
 
 
-class BaseSampler:
+class BaseSampler(abc.ABC):
     """Base class for creating random samples of leaf/canopy parameters."""
 
-    generator: Callable
-    seed: int
-    min: float
-    max: float
-    mean: float
-    stdv: float
-
-    def __init__(self, seed: int = None, min: float = None, max: float = None, mean: float = None, stdv: float = None):
+    def __init__(
+        self,
+        seed: int | None = None,
+        min: float | None = None,
+        max: float | None = None,
+        mean: float | None = None,
+        stdv: float | None = None,
+    ):
         """Create a generic random sampler class. Designed to be extended."""
-        generator = np.random.default_rng(seed=seed)
-        self.generator = generator
+        self.generator = np.random.default_rng(seed=seed)
         self.seed = seed
         self.min = min
         self.max = max
         self.mean = mean
         self.stdv = stdv
 
-    @classmethod
-    def sample(self, **kwargs) -> float:
-        """Placeholder for the method implemented by the subclass."""
-        pass
+    @abc.abstractmethod
+    def sample(self) -> float:
+        """Return a single random sample. Implemented by the subclass."""
 
 
 class UniformSampler(BaseSampler):
     """Uniform random sample generator."""
 
-    def __init__(self, min: float, max: float, seed: int = 2017):
+    def __init__(self, min: float, max: float, seed: int | None = 2017):
         """Generate a uniform random sampler from a range of values.
 
         Args:
@@ -42,22 +42,30 @@ class UniformSampler(BaseSampler):
             max: the maximum value to include in sampling.
             seed: set the seed for consistent random number generation.
 
-        Usage:
-            us = xleaf.samplers.UniformSampler(5, 10)
-            us.sample()
-            >>> 9.709636474059744
+        Example:
+            >>> us = xleaf.samplers.UniformSampler(5, 10)
+            >>> us.sample()
+            9.709636474059744
         """
         super().__init__(min=min, max=max, seed=seed)
 
     def sample(self) -> float:
         """Return a uniform random sample drawn from the min/max range."""
+        assert self.min is not None and self.max is not None
         return self.generator.uniform(self.min, self.max)
 
 
 class NormalSampler(BaseSampler):
-    """Generate a normally distributed random samples"""
+    """Generate normally distributed random samples."""
 
-    def __init__(self, mean: float, stdv: float, min: float = None, max: float = None, seed: int = 2017):
+    def __init__(
+        self,
+        mean: float,
+        stdv: float,
+        min: float | None = None,
+        max: float | None = None,
+        seed: int | None = 2017,
+    ):
         """Generate a normal random sampler from a parameterized distribution.
 
         Args:
@@ -68,18 +76,23 @@ class NormalSampler(BaseSampler):
                 both min and max must be set if either are set.
             seed: set the seed for consistent random number generation.
 
-        Usage:
-            ns = xleaf.samplers.NormalSampler(4, 2, min=0.2, max=10)
-            ns.sample()
-            >>> 6.751017489983783
+        Example:
+            >>> ns = xleaf.samplers.NormalSampler(4, 2, min=0.2, max=10)
+            >>> ns.sample()
+            6.751017489983783
         """
         super().__init__(mean=mean, stdv=stdv, min=min, max=max, seed=seed)
 
     def sample(self) -> float:
-        """Return a random sample drawn from a normal distribution."""
+        """Return a random sample drawn from a normal distribution.
+
+        If min and max are set, samples outside the range are rejected and
+        redrawn.
+        """
+        assert self.mean is not None and self.stdv is not None
         rnd = self.generator.normal(self.mean, self.stdv)
 
-        if self.min is not None or self.max is not None:
+        if self.min is not None and self.max is not None:
             while rnd < self.min or rnd > self.max:
                 rnd = self.generator.normal(self.mean, self.stdv)
 

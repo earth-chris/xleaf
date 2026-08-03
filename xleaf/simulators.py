@@ -1,11 +1,16 @@
 """Methods for simulating leaf and canopy spectra."""
 
-from typing import Tuple, Union
+from __future__ import annotations
 
 import numpy as np
+import numpy.typing as npt
 
-from xleaf import prosail
+from xleaf import prosail  # type: ignore[attr-defined]
 from xleaf.parameters import LeafSpherical
+from xleaf.validation import Lidf, as_spectrum, relative_azimuth, resolve_lidf
+
+# brown pigment content, held at 0 as in the reference PROSAIL implementation
+_CBROWN = 0.0
 
 
 def simulate_leaf(
@@ -15,15 +20,15 @@ def simulate_leaf(
     ewt: float = 0.01,
     lma: float = 0.009,
     N: float = 1.5,
-    transmittence: bool = False,
-) -> np.ndarray:
+    transmittance: bool = False,
+) -> npt.NDArray[np.float64]:
     """Simulate a leaf reflectance profile based on structural/functional traits.
 
-    Source: Feret, Gitelson, Noble & Jacqumoud (2017). PROSPECT-D: Towards modeling
+    Source: Feret, Gitelson, Noble & Jacquemoud (2017). PROSPECT-D: Towards modeling
         leaf optical properties through a complete lifecycle, RSE
         http://doi.org/10.1016/j.rse.2017.03.004
 
-    Seee also: Rivera, Verrels, Leonenko & Moreno (2017)
+    See also: Rivera, Verrelst, Leonenko & Moreno (2017)
         https://www.mdpi.com/2072-4292/5/7/3280
 
     Args:
@@ -40,31 +45,23 @@ def simulate_leaf(
             typical range is ~ 0.002 - 0.036.
         N: leaf structure parameter (unitless)
             typical range is 1 - 3.6.
-        transmittence: return transmittence spectra
+        transmittance: also return the transmittance spectrum.
 
     Returns:
-        an array of shape (n_wavelengths,) if transmittence is false.
-        of shape (2, n_wavelengths) with refl, trans as the row order.
+        an array of shape (n_wavelengths,) with reflectance if transmittance is
+        False, otherwise an array of shape (2, n_wavelengths) with reflectance
+        and transmittance as the row order.
+
+    Example:
+        >>> import xleaf
+        >>> refl = xleaf.simulate_leaf(chl=30)
+        >>> refl, trans = xleaf.simulate_leaf(transmittance=True)
     """
-    # hardcode brown pigment value because no one but JB knows what it does
-    # and even he sets it to 0
-    cbrown = float(0)
+    refl, trans = prosail.prospect_db(N, chl, car, antho, _CBROWN, ewt, lma).transpose()
 
-    # cast all args to prevent bad fortran behavior
-    chl = float(chl)
-    car = float(car)
-    antho = float(antho)
-    ewt = float(ewt)
-    lma = float(lma)
-    N = float(N)
-
-    # run the simulation
-    refl, trans = prosail.prospect_db(N, chl, car, antho, cbrown, ewt, lma).transpose()
-
-    if transmittence:
+    if transmittance:
         return np.vstack((refl, trans))
-    else:
-        return refl
+    return refl
 
 
 def simulate_canopy(
@@ -75,17 +72,20 @@ def simulate_canopy(
     lma: float = 0.009,
     N: float = 1.5,
     lai: float = 3.0,
-    lidf: Union[float, Tuple[float, float]] = LeafSpherical,
+    lidf: Lidf = LeafSpherical,
     soil_dryness: float = 0.75,
     solar_zenith: float = 35,
     solar_azimuth: float = 120,
     view_zenith: float = 0,
     view_azimuth: float = 60,
     hot_spot: float = 0.01,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Simulate a canopy reflectance profile based on structural/functional traits.
 
-    Source: Feret, Gitelson, Noble & Jacqumoud (2017). PROSPECT-D: Towards modeling
+    Runs PROSPECT-D and 4SAIL together: leaf optical properties are modeled from
+    the leaf traits, then propagated through the canopy model.
+
+    Source: Feret, Gitelson, Noble & Jacquemoud (2017). PROSPECT-D: Towards modeling
         leaf optical properties through a complete lifecycle, RSE
         http://doi.org/10.1016/j.rse.2017.03.004
 
@@ -130,72 +130,46 @@ def simulate_canopy(
 
     Returns:
         an array of shape (n_wavelengths,).
+
+    Example:
+        >>> import xleaf
+        >>> canopy = xleaf.simulate_canopy(chl=40, lai=3.0, lidf=30)
     """
-    # hardcode brown pigment value to 0
-    cbrown = float(0)
+    psi = relative_azimuth(view_azimuth, solar_azimuth)
+    leaf_type, leaf_slope, leaf_modality = resolve_lidf(lidf)
 
-    # cast all args to prevent bad fortran behavior
-    chl = float(chl)
-    car = float(car)
-    antho = float(antho)
-    ewt = float(ewt)
-    lma = float(lma)
-    N = float(N)
-    lai = float(lai)
-    soil_dryness = float(soil_dryness)
-    solar_zenith = np.abs(float(solar_zenith))
-    solar_azimuth = float(solar_azimuth)
-    view_zenith = np.abs(float(view_zenith))
-    view_azimuth = float(view_azimuth)
-    hot_spot = float(hot_spot)
-
-    # compute relative azimuth angle in degrees (0..180) as expected by PROSAIL
-    psi = float(np.abs((view_azimuth - solar_azimuth) % 360.0))
-    psi = 360.0 - psi if psi > 180.0 else psi
-
-    # handle multiple leaf type parameters
-    try:
-        leaf_slope, leaf_modality = float(lidf[0]), float(lidf[1])
-        leaf_type = int(1)
-    except TypeError:
-        leaf_slope = float(lidf)
-        leaf_modality = float(0)
-        leaf_type = int(2)
-
-    refl = prosail.simulate(
+    return prosail.simulate(
         N,
         chl,
         car,
         antho,
-        cbrown,
+        _CBROWN,
         ewt,
         lma,
         soil_dryness,
         lai,
         hot_spot,
-        solar_zenith,
-        view_zenith,
+        np.abs(solar_zenith),
+        np.abs(view_zenith),
         psi,
         leaf_type,
         leaf_slope,
         leaf_modality,
     )
 
-    return refl
-
 
 def simulate_sail(
-    leaf_refl: np.ndarray,
-    leaf_trans: np.ndarray,
+    leaf_refl: npt.NDArray[np.float64],
+    leaf_trans: npt.NDArray[np.float64],
     lai: float = 3.0,
-    lidf: Union[float, Tuple[float, float]] = LeafSpherical,
+    lidf: Lidf = LeafSpherical,
     soil_dryness: float = 0.75,
     solar_zenith: float = 35,
     solar_azimuth: float = 120,
     view_zenith: float = 0,
     view_azimuth: float = 60,
     hot_spot: float = 0.01,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Simulate a canopy reflectance profile from a supplied leaf spectrum.
 
     Runs only the 4SAIL canopy model, taking leaf optical properties as input
@@ -209,7 +183,7 @@ def simulate_sail(
     Args:
         leaf_refl: leaf reflectance spectrum, shape (n_wavelengths,).
         leaf_trans: leaf transmittance spectrum, shape (n_wavelengths,).
-            pair these with the output of `simulate_leaf(transmittence=True)`,
+            pair these with the output of `simulate_leaf(transmittance=True)`,
             which returns (refl, trans) as `spectrum[0]`, `spectrum[1]`.
         lai: leaf area index (canopy leaf density; m2/m2)
             forest range is ~ 0.2 - 15
@@ -231,45 +205,31 @@ def simulate_sail(
 
     Returns:
         an array of shape (n_wavelengths,).
+
+    Raises:
+        ValueError: if either leaf spectrum is not length n_wavelengths.
+
+    Example:
+        >>> import xleaf
+        >>> refl, trans = xleaf.simulate_leaf(transmittance=True)
+        >>> canopy = xleaf.simulate_sail(refl, trans, lai=4, lidf=30)
     """
-    # coerce leaf spectra to contiguous 1d float64 arrays for fortran
-    leaf_refl = np.ascontiguousarray(leaf_refl, dtype=np.float64).ravel()
-    leaf_trans = np.ascontiguousarray(leaf_trans, dtype=np.float64).ravel()
+    leaf_refl = as_spectrum(leaf_refl)
+    leaf_trans = as_spectrum(leaf_trans)
 
-    # cast all args to prevent bad fortran behavior
-    lai = float(lai)
-    soil_dryness = float(soil_dryness)
-    solar_zenith = np.abs(float(solar_zenith))
-    solar_azimuth = float(solar_azimuth)
-    view_zenith = np.abs(float(view_zenith))
-    view_azimuth = float(view_azimuth)
-    hot_spot = float(hot_spot)
+    psi = relative_azimuth(view_azimuth, solar_azimuth)
+    leaf_type, leaf_slope, leaf_modality = resolve_lidf(lidf)
 
-    # compute relative azimuth angle in degrees (0..180) as expected by PROSAIL
-    psi = float(np.abs((view_azimuth - solar_azimuth) % 360.0))
-    psi = 360.0 - psi if psi > 180.0 else psi
-
-    # handle multiple leaf type parameters
-    try:
-        leaf_slope, leaf_modality = float(lidf[0]), float(lidf[1])
-        leaf_type = int(1)
-    except TypeError:
-        leaf_slope = float(lidf)
-        leaf_modality = float(0)
-        leaf_type = int(2)
-
-    refl = prosail.simulate_sail(
+    return prosail.simulate_sail(
         leaf_refl,
         leaf_trans,
         soil_dryness,
         lai,
         hot_spot,
-        solar_zenith,
-        view_zenith,
+        np.abs(solar_zenith),
+        np.abs(view_zenith),
         psi,
         leaf_type,
         leaf_slope,
         leaf_modality,
     )
-
-    return refl

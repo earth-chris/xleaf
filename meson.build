@@ -1,5 +1,5 @@
 project('xleaf', 'c',
-  version : '1.1.0',
+  version : '1.2.0',
   meson_version : '>=1.1.0',
   default_options : ['warning_level=2'],
 )
@@ -46,6 +46,7 @@ py.extension_module('prosail',
 
 py.install_sources(
   'xleaf/__init__.py',
+  'xleaf/validation.py',
   'xleaf/parameters.py',
   'xleaf/samplers.py',
   'xleaf/simulators.py',
