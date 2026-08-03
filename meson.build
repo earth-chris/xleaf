@@ -24,6 +24,7 @@ prosail_fortran_sources = files(
   'prosail/LIDF.f90',
   'prosail/dladgen.f',
   'prosail/PRO4SAIL.f90',
+  'prosail/SAIL.f90',
   'prosail/prospect_DB.f90',
   'prosail/tav_abs.f90',
   'prosail/volscatt.f90',
