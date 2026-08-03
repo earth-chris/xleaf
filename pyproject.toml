@@ -9,7 +9,7 @@ description = "Leaf and canopy radiative transfer modeling tools built on PROSPE
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
-authors = [{ name = "Christopher Anderson", email = "cbanders@stanford.edu" }]
+authors = [{ name = "Christopher Anderson", email = "cbanders@alumni.stanford.edu" }]
 keywords = [
     "prospect",
     "sail",
