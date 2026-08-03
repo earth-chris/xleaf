@@ -10,21 +10,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: prefix-dev/setup-pixi@v0.8.1
 
-      - run: pixi run -e build build
+      - run: rm -rf dist && pixi run -e build build
 
       - name: Repair wheel (Linux)
         if: runner.os == 'Linux'
         run: |
-          pixi run -e build python -m pip install --upgrade pip auditwheel
-          pixi run -e build python -m auditwheel repair dist/*.whl --wheel-dir dist
-          find dist -name '*.whl' -not -name '*manylinux*' -delete
+          pixi run -e build python -m auditwheel repair dist/*linux_x86_64.whl --wheel-dir /tmp/wheelhouse
+          rm dist/*linux_x86_64.whl
+          mv /tmp/wheelhouse/*manylinux*.whl dist/
 
       - uses: actions/upload-artifact@v4
         with:
@@ -36,8 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: pypi
-    permissions:
-      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:
