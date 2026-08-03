@@ -25,6 +25,6 @@ from xleaf.parameters import (
     fwhms,
     wavelengths,
 )
-from xleaf.simulators import simulate_canopy, simulate_leaf
+from xleaf.simulators import simulate_canopy, simulate_leaf, simulate_sail
 
 __version__ = importlib.metadata.version("xleaf")

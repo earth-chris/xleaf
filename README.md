@@ -97,6 +97,46 @@ plt.legend()
 
 ---
 
+## Chaining leaf and canopy models
+
+🔗 `simulate_canopy` runs PROSPECT and 4SAIL together. If you'd rather run the canopy model on a leaf spectrum you already have — a measured spectrum, or one from a different leaf model — use `simulate_sail`. It takes leaf reflectance and transmittance directly, so you can pair it with `simulate_leaf(transmittence=True)`:
+
+```python
+import xleaf
+import matplotlib.pyplot as plt
+
+# simulate a leaf, returning both reflectance and transmittance
+reflectance, transmittence = xleaf.simulate_leaf(
+    chl = 40, # ug/cm2
+    car = 8, # ug/cm2
+    antho = 0.5, # ug/cm2
+    ewt = 0.01, # cm
+    lma = 0.009, # g/cm2
+    N = 1.5, # unitless
+    transmittence = True,
+)
+
+# then run the canopy model on that leaf spectrum
+canopy = xleaf.simulate_sail(
+    reflectance,
+    transmittence,
+    lai = 3.0, # m2/m2
+    lidf = 30, # degrees
+    soil_dryness = 0.75, # %
+    solar_zenith = 35, # degrees
+    solar_azimuth = 120, # degrees
+    view_zenith = 0, # degrees
+    view_azimuth = 60, # degrees
+    hot_spot = 0.01, # unitless
+)
+
+plt.plot(xleaf.wavelengths, reflectance, label='leaf')
+plt.plot(xleaf.wavelengths, canopy, label='canopy')
+plt.legend()
+```
+
+---
+
 ## Random forests
 
 📊 `xleaf` provides classes for generating random parameters within the global range of expected values. These classes have a `.sample()` method for generating an appropriate random value based on a literature review.
@@ -144,10 +184,9 @@ plt.legend()
 
 ## Developed by
 
-[Christopher Anderson](https://cbanderson.info)[^1] [^2]
+[Christopher Anderson](https://cbanderson.info)[^1]
 
 <a href="https://twitter.com/earth_chris">![Twitter Follow](https://img.shields.io/twitter/follow/earth_chris)</a>
 <a href="https://github.com/earth-chris">![GitHub Stars](https://img.shields.io/github/stars/earth-chris?affiliations=OWNER%2CCOLLABORATOR&style=social)</a>
 
 [^1]: [Planet Labs PBC, San Francisco](https://www.planet.com)
-[^2]: [Center for Conservation Biology, Stanford University](https://ccb.stanford.edu)
