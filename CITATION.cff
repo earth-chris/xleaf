@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite as below."
+authors:
+  - family-names: Anderson
+    given-names: Christopher B.
+    orcid: "https://orcid.org/0000-0001-7392-4368"
+title: "xleaf: Leaf and canopy radiative transfer modeling tools for PROSPECT-D and SAIL"
+version: 1.2.2
+doi: 10.5281/zenodo.21786969
+date-released: "2026-08-04"
+url: "https://github.com/earth-chris/xleaf"
+keywords:
+  - "remote-sensing"
+  - "leaf"
+  - "canopy"
+  - "PROSPECT"
+  - "SAIL"
