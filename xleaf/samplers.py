@@ -6,6 +6,9 @@ import abc
 
 import numpy as np
 
+# default random seed, shared across samplers for reproducible draws
+SEED = 2017
+
 
 class BaseSampler(abc.ABC):
     """Base class for creating random samples of leaf/canopy parameters."""
@@ -34,7 +37,7 @@ class BaseSampler(abc.ABC):
 class UniformSampler(BaseSampler):
     """Uniform random sample generator."""
 
-    def __init__(self, min: float, max: float, seed: int | None = 2017):
+    def __init__(self, min: float, max: float, seed: int | None = SEED):
         """Generate a uniform random sampler from a range of values.
 
         Args:
@@ -65,7 +68,7 @@ class NormalSampler(BaseSampler):
         stdv: float,
         min: float | None = None,
         max: float | None = None,
-        seed: int | None = 2017,
+        seed: int | None = SEED,
     ):
         """Generate a normal random sampler from a parameterized distribution.
 
