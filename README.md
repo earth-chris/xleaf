@@ -7,8 +7,9 @@
 </p>
 
 ![GitHub](https://img.shields.io/github/license/earth-chris/xleaf)
-![PyPI version](https://img.shields.io/pypi/v/xleaf)
 ![GitHub last commit](https://img.shields.io/github/last-commit/earth-chris/xleaf)
+[![PyPI version](https://img.shields.io/pypi/v/xleaf)](https://pypi.org/project/xleaf/)
+[![DOI](https://zenodo.org/badge/606848756.svg)](https://doi.org/10.5281/zenodo.21786969)
 
 ---
 
@@ -33,6 +34,21 @@
 ```
 
 🧙 Shout out to my man JB.
+
+If you used `xleaf` in your research and want to credit it, please cite:
+
+```
+@software{anderson_xleaf_2026,
+  author       = {Anderson, Christopher B.},
+  title        = {xleaf: Leaf and canopy radiative transfer modeling tools for PROSPECT-D and SAIL},
+  month        = aug,
+  year         = 2026,
+  version      = {1.2.2},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.21786969},
+  url          = {https://github.com/earth-chris/xleaf}
+}
+```
 
 ---
 
@@ -134,6 +150,8 @@ plt.plot(xleaf.wavelengths, reflectance, label='leaf')
 plt.plot(xleaf.wavelengths, canopy, label='canopy')
 plt.legend()
 ```
+
+This enables canopy simulations from field-measured reflectance and transmittence.
 
 ---
 
